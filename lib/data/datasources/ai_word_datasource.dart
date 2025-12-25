@@ -238,30 +238,29 @@ CIVILIAN WORD: "$civilianWord"
 PLAYED HISTORY: $playedWords
 
 PROCESS:
-1. ANALYZE "$civilianWord": What are its meanings, contexts, and associations?
+1. ANALYZE "$civilianWord": What are its meanings and contexts?
 2. STRATEGY SELECTION (Pick ONE):
    - A: POLYSEMY (Double Meaning).
-     Example: "Banco" (Furniture) -> "Dinheiro" (Finance).
-   - B: POP CULTURE (Famous Characters/Stories).
-     Example: "Anel" -> "Sauron".
-   - C: ICONIC ASSOCIATION (Visuals/Object).
-     Example: "Nuvem" -> "Algodão".
+     Example: "Banco" (Assento) -> Hint "Dinheiro" (Banco Finaceiro).
+   - B: SPECIFIC ASSOCIATION.
+     Example: "Nuvem" -> Hint "Algodão" (Visual).
+   - C: POPULAR REFERENCE (Only if UNIVERSALLY knwon).
+     Example: "Anel" -> Hint "Sauron".
 3. DRAFTING & FILTERING (The Checklist):
-   - [ ] Is it culturally POPULAR in Brazil?
-   - [ ] Is it NATIVE? (Reject uncommon Anglicisms like "Tuxedo" -> Use "Fraque" instead).
-   - [ ] Is it DISTINCT? (Not a synonym, not same root/etymology like Flor/Floricultura).
-   - [ ] Is it NOT an obvious part? (No Car -> Wheel).
+   - [ ] Is it a COMMON, EVERYDAY word? (Avoid weird cultural leaps like Papagaio->Papel).
+   - [ ] Is it NON-OBVIOUS? (If I say the Hint, is the Civilian Word the IMMEDIATE answer? If yes, REJECT).
+   - [ ] Is it DISTINCT? (Not a synonym, not same root like Flor/Floricultura).
    - [ ] Is it NOT in the Played History?
-4. SELF-TEST (Reverse Obviousness):
-   - "If I say [YOUR_HINT] in category $catEng, is '$civilianWord' the IMMEDIATE/TOP-OF-MIND answer?"
-   - ❌ "Listras" (Animals) -> "Zebra" (REJECT! First thing people think of).
-   - ❌ "Excalibur" (Weapons) -> "Espada" (REJECT! Too specific).
-   - ✅ "Nuvem" (Nature) -> "Algodão" (Good! Could be Chuva, Céu...).
+4. SELF-TEST (Reverse Obviousness - "The Trojan Horse Test"):
+   - "If I say '$infiltratorWord' (Hint) + Category '$catEng', does '$civilianWord' become the ONLY logical answer?"
+   - ❌ "Troia" -> "Cavalo" (REJECT! Unique Trigger).
+   - ❌ "Listras" -> "Zebra" (REJECT! Immediate Association).
+   - ✅ "Algodão" -> "Nuvem" (Good! Could be Camiseta, Doce, Farmácia...).
 
 OUTPUT FORMAT (JSON ONLY):
 {
   "reasoning": "Step-by-step analysis passing the checklist...",
-  "strategy": "Polysemy/PopCulture/Association",
+  "strategy": "Polysemy/Association/Reference",
   "infiltrator_word": "The Word"
 }
 LANGUAGE: Brazilian Portuguese.
@@ -294,6 +293,7 @@ LANGUAGE: Brazilian Portuguese.
       final prompt = '''
 You are the GUARDIAN AGENT.
 MISSION: Ensure the game is FLUID, FUN, and FAIR.
+PRINCIPLE: Use COMMON, EVERYDAY words. Avoid weird logic or "forced" cultural references.
 
 CATEGORY: $catEng
 PAIR TO VALIDATE:
@@ -301,17 +301,17 @@ PAIR TO VALIDATE:
 - INFILTRATOR HINT: "$infiltratorWord"
 
 VALIDATION CHECKLIST:
-1. [ ] CONNECTION VALIDITY: Does it use Polysemy, Pop Culture, History, or Iconic Association?
-2. [ ] POPULARITY: Is the connection widely known in Brazil? (Reject invented slang).
-3. [ ] LANGUAGE CHECK: Is it NATIVE Portuguese?
-   - Reject uncommon Anglicisms (e.g., "Tuxedo", "Coffee Break") unless extremely common (like "Mouse", "Internet").
-   - Prefer "Fraque" over "Tuxedo".
-4. [ ] INDEPENDENCE: Is it NOT a synonym? Is it FREE of shared roots (e.g. Flor/Floricultura)?
-5. [ ] REVERSE OBVIOUSNESS: If you hear "$infiltratorWord" in "$catEng", does "$civilianWord" come to mind IMMEDIATELY?
-   - ❌ "Listras" -> "Zebra" (REJECT! It's the primary association).
-   - If YES -> REJECT (Too easy).
-   - If NO -> APPROVE (Ambiguity is good, e.g. "Nuvem" could be many things).
-6. [ ] HISTORY CHECK: Is the hint free of played words ($playedWords)?
+1. [ ] IS IT NATURAL? Does the connection make sense to a normal person? 
+   - Reject "forced" associations (e.g. Papagaio -> Papel is BAD).
+2. [ ] IS IT COMMON? Is the hint a word regular people use daily?
+   - Reject obscure terms or weird slang.
+3. [ ] REVERSE OBVIOUSNESS CHECK (The "Unique Trigger" Test):
+   - If you hear "$infiltratorWord", is "$civilianWord" the IMMEDIATE/ONLY answer?
+   - ❌ "Troia" -> "Cavalo" (REJECT! Too specific/obvious).
+   - ❌ "Listras" -> "Zebra" (REJECT! Top-of-mind association).
+   - If NO -> APPROVE (Ambiguity is maintained).
+4. [ ] INDEPENDENCE: Is it NOT a synonym? Is it FREE of shared roots?
+5. [ ] HISTORY CHECK: Is the hint free of played words?
 
 DECISION:
 - All checks pass? -> APPROVED: true.
