@@ -252,7 +252,7 @@ PROCESS:
    - [ ] Is it DISTINCT? (Not a synonym, not same root like Flor/Floricultura).
    - [ ] Is it NOT in the Played History?
 4. SELF-TEST (Reverse Obviousness - "The Trojan Horse Test"):
-   - "If I say '$infiltratorWord' (Hint) + Category '$catEng', does '$civilianWord' become the ONLY logical answer?"
+   - "If I say [YOUR_HINT] (Hint) + Category '$catEng', does '$civilianWord' become the ONLY logical answer?"
    - ❌ "Troia" -> "Cavalo" (REJECT! Unique Trigger).
    - ❌ "Listras" -> "Zebra" (REJECT! Immediate Association).
    - ✅ "Algodão" -> "Nuvem" (Good! Could be Camiseta, Doce, Farmácia...).
