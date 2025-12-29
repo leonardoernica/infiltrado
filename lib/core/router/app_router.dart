@@ -4,6 +4,7 @@ import '../../presentation/screens/home/home_screen.dart';
 import '../../presentation/screens/setup/setup_screen.dart';
 import '../../presentation/screens/game_settings/game_settings_screen.dart';
 import '../../presentation/screens/categories/category_selection_screen.dart';
+import '../../presentation/screens/categories/create_category_screen.dart';
 import '../../presentation/screens/loading/loading_screen.dart';
 import '../../presentation/screens/role_pass/role_pass_screen.dart';
 import '../../presentation/screens/blank/blank_screen.dart';
@@ -35,6 +36,10 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(
         path: '/categories',
         builder: (context, state) => const CategorySelectionScreen(),
+      ),
+      GoRoute(
+        path: '/create_category',
+        builder: (context, state) => const CreateCategoryScreen(),
       ),
       GoRoute(
         path: '/loading',

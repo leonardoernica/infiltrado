@@ -9,8 +9,8 @@ class GameRepositoryImpl implements GameRepository {
   GameRepositoryImpl(this._datasource);
 
   @override
-  Future<WordPair> getWordPair(String category, List<WordPair> history) async {
-    final model = await _datasource.fetchWordPair(category, history);
+  Future<WordPair> getWordPair(String category, List<WordPair> history, {String? customDescription}) async {
+    final model = await _datasource.fetchWordPair(category, history, customDescription: customDescription);
     return model.toEntity();
   }
 }

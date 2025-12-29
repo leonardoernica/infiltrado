@@ -77,6 +77,12 @@ class CategorySelectionScreen extends ConsumerWidget {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/create_category'),
+        backgroundColor: AppColors.secondary,
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('Criar Categoria', style: AppTextStyles.button),
+      ),
     );
   }
 }

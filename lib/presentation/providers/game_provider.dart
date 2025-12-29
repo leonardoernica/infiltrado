@@ -117,11 +117,11 @@ class Game extends _$Game {
     }
   }
 
-  Future<void> startGame(String category) async {
+  Future<void> startGame(String category, {String? customDescription}) async {
     state = state.copyWith(status: GameStatus.loading, selectedCategory: category);
     try {
       final repository = ref.read(gameRepositoryImplProvider);
-      final wordPair = await repository.getWordPair(category, state.history);
+      final wordPair = await repository.getWordPair(category, state.history, customDescription: customDescription);
       
       distributeRoles();
       
@@ -196,8 +196,19 @@ class Game extends _$Game {
     state = state.copyWith(isTimerPaused: false);
   }
   
+  void resumeDiscussion() {
+    state = state.copyWith(
+      phase: GamePhase.discussion,
+      isTimerPaused: false,
+    );
+    _startTimer();
+  }
+  
   void goToVoting() {
     _timer?.cancel();
+    // Pause the timer to preserve secondsRemaining
+    state = state.copyWith(isTimerPaused: true);
+    
     // Find first alive player for voting
     final alivePlayers = state.players.where((p) => p.status == PlayerStatus.alive).toList();
     int firstAliveIndex = 0;
@@ -210,7 +221,7 @@ class Game extends _$Game {
     state = state.copyWith(
       phase: GamePhase.voting,
       players: state.players.map((p) => p.copyWith(votedFor: null)).toList(),
-      currentTurnIndex: firstAliveIndex, // Start with first alive player
+      currentTurnIndex: firstAliveIndex, 
     );
   }
   
@@ -243,6 +254,7 @@ class Game extends _$Game {
     final maxVotes = votes.values.reduce((a, b) => a > b ? a : b);
     final topVoted = votes.entries.where((e) => e.value == maxVotes).toList();
     
+    // Tie Breaker Logic: Currently just show result, maybe trigger re-vote or discussion
     if (topVoted.length > 1) {
       state = state.copyWith(phase: GamePhase.voteResult);
       return null;

@@ -55,8 +55,8 @@ class AiWordDatasource {
 
   /// Main entry point for the Multi-Agent Orchestration
   Future<WordPairModel> fetchWordPair(
-      String category, List<WordPair> history) async {
-    final categoryDescription = _categoryDescriptions[category] ?? category;
+      String category, List<WordPair> history, {String? customDescription}) async {
+    final categoryDescription = customDescription ?? _categoryDescriptions[category] ?? category;
 
     // 1. Prepare forbidden words list once
     final forbiddenInfo = _buildForbiddenInfo(history);
@@ -79,7 +79,8 @@ class AiWordDatasource {
         final civilianWord = await _runDirectorAgent(
           category, 
           targetIndex, 
-          forbiddenInfo, 
+          forbiddenInfo,
+          customDescription, 
           sbLog
         );
         
@@ -161,16 +162,19 @@ class AiWordDatasource {
   Future<String?> _runDirectorAgent(
       String category, 
       int targetIndex, 
-      String playedWords, 
+      String playedWords,
+      String? customDescription, 
       StringBuffer log) async {
     
     final catEng = _categoryNamesEnglish[category] ?? category;
+    final descPrompt = customDescription != null ? "DESCRIPTION: $customDescription" : "";
 
     final prompt = '''
 You are the DIRECTOR AGENT for the game "The Infiltrator".
 Your GOAL is to select a CIVILIAN WORD based on a specific random index.
 
 CATEGORY: $catEng
+$descPrompt
 PLAYED HISTORY (DO NOT REPEAT): $playedWords
 
 PROCESS:

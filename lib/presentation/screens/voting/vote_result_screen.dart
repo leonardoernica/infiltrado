@@ -138,8 +138,8 @@ class VoteResultScreen extends ConsumerWidget {
                       notifier.applyGameOver();
                       context.go('/result');
                     } else {
-                      // Reset timer to chosen duration
-                      notifier.startDiscussion();
+                      // Resume timer from where it left off
+                      notifier.resumeDiscussion();
                       context.go('/game');
                     }
                   },
