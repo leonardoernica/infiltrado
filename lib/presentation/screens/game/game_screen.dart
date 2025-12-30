@@ -185,27 +185,29 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    if (!isSpy) ...[
-                      Text(
-                        'Sua palavra secreta é:',
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                    Text(
+                      'Sua palavra é:',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      isSpy 
+                        ? (ref.read(gameProvider).currentWordPair?.infiltrator ?? 'Erro')
+                        : (ref.read(gameProvider).currentWordPair?.civilian ?? 'Erro'),
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.display.copyWith(
+                        color: AppColors.textPrimary,
+                        fontSize: 42,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 12),
+                    ),
+                    if (isSpy) ...[
+                      const SizedBox(height: 16),
                       Text(
-                        ref.read(gameProvider).currentWordPair?.civilian ?? 'Erro',
+                        'Disfarce-se e descubra a palavra dos civis!',
                         textAlign: TextAlign.center,
-                        style: AppTextStyles.display.copyWith(
-                          color: AppColors.textPrimary,
-                          fontSize: 42,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ] else ...[
-                      Text(
-                        'Você deve se disfarçar e tentar descobrir a palavra dos civis!',
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.body.copyWith(fontSize: 18),
+                        style: AppTextStyles.body.copyWith(fontSize: 16, color: AppColors.textSecondary),
                       ),
                     ],
                     const SizedBox(height: 48),
