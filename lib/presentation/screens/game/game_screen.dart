@@ -27,24 +27,67 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
     showDialog(
       context: context,
-      builder: (context) => SimpleDialog(
-        title: const Text('Quem esqueceu?', textAlign: TextAlign.center),
-        children: alivePlayers.map((player) {
-          return SimpleDialogOption(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-            onPressed: () {
-              Navigator.pop(context); // Close selection dialog
-              _showRevealDialog(player as Player);
-            },
-            child: Row(
-              children: [
-                Icon(Icons.person, color: AppColors.primary),
-                const SizedBox(width: 12),
-                Text(player.name, style: AppTextStyles.body),
-              ],
-            ),
-          );
-        }).toList(),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Quem esqueceu?',
+                style: AppTextStyles.title,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: alivePlayers.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    final player = alivePlayers[index];
+                    return ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      tileColor: AppColors.surfaceElevated,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      leading: CircleAvatar(
+                        backgroundColor: AppColors.primary.withOpacity(0.2),
+                        child: Text(
+                          player.name[0].toUpperCase(),
+                          style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      title: Text(player.name, style: AppTextStyles.heading.copyWith(fontSize: 16)),
+                      trailing: Icon(Icons.chevron_right_rounded, color: AppColors.textTertiary),
+                      onTap: () {
+                        Navigator.pop(context); // Close selection dialog
+                        _showRevealDialog(player as Player);
+                      },
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Cancelar', style: AppTextStyles.body.copyWith(color: AppColors.textSecondary)),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -57,72 +100,123 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       barrierDismissible: false,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
-          return AlertDialog(
-            backgroundColor: AppColors.surface,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            title: Text(
-              isRevealed ? 'Palavra Secreta' : 'Atenção!',
-              textAlign: TextAlign.center,
-              style: AppTextStyles.title,
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (!isRevealed) ...[
-                  const Icon(Icons.lock_rounded, size: 64, color: AppColors.textSecondary),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Passe o celular para:\n${player.name}',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.heading,
+          final isSpy = player.role == PlayerRole.infiltrator;
+          final roleColor = isSpy ? AppColors.primary : AppColors.secondary;
+          
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(
+                  color: isRevealed ? roleColor.withOpacity(0.5) : AppColors.border,
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: (isRevealed ? roleColor : Colors.black).withOpacity(0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
                   ),
-                ] else ...[
-                  if (player.role == PlayerRole.infiltrator) ...[
-                    const Icon(Icons.visibility_off_rounded, size: 64, color: AppColors.primary),
-                    const SizedBox(height: 16),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (!isRevealed) ...[
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceElevated,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.lock_person_rounded, size: 80, color: AppColors.textSecondary),
+                    ),
+                    const SizedBox(height: 32),
                     Text(
-                      'Você é o Infiltrado!',
+                      'Passe o celular para:',
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.heading.copyWith(color: AppColors.primary),
+                      style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Disfarce e descubra a palavra.',
+                      player.name,
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.body,
+                      style: AppTextStyles.display.copyWith(fontSize: 36),
+                    ),
+                    const SizedBox(height: 40),
+                    AppButton(
+                      text: 'Sou eu, mostrar',
+                      onPressed: () {
+                        setState(() => isRevealed = true);
+                      },
                     ),
                   ] else ...[
-                    const Icon(Icons.visibility_rounded, size: 64, color: AppColors.secondary),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Sua palavra é:',
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.caption,
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: roleColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        isSpy ? Icons.visibility_off_rounded : Icons.person_rounded, 
+                        size: 80, 
+                        color: roleColor
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      ref.read(gameProvider).currentWordPair?.civilian ?? 'Erro',
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.heading.copyWith(color: AppColors.secondary, fontSize: 32),
+                    const SizedBox(height: 24),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: roleColor.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Text(
+                        isSpy ? 'INFILTRADO' : 'CIVIL',
+                        style: AppTextStyles.caption.copyWith(
+                          color: roleColor,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                        ),
+                      ),
                     ),
-                  ]
+                    const SizedBox(height: 32),
+                    if (!isSpy) ...[
+                      Text(
+                        'Sua palavra secreta é:',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        ref.read(gameProvider).currentWordPair?.civilian ?? 'Erro',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.display.copyWith(
+                          color: AppColors.textPrimary,
+                          fontSize: 42,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ] else ...[
+                      Text(
+                        'Você deve se disfarçar e tentar descobrir a palavra dos civis!',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.body.copyWith(fontSize: 18),
+                      ),
+                    ],
+                    const SizedBox(height: 48),
+                    AppButton(
+                      text: 'Entendi, ocultar',
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-            actions: [
-              if (!isRevealed)
-                AppButton(
-                  text: 'Sou eu, mostrar',
-                  onPressed: () {
-                    setState(() => isRevealed = true);
-                  },
-                )
-              else
-                AppButton(
-                  text: 'Entendi, ocultar',
-                  onPressed: () => Navigator.pop(context),
-                ),
-            ],
           );
         },
       ),
