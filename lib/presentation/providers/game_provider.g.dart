@@ -25,7 +25,7 @@ final gameRepositoryImplProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GameRepositoryImplRef = AutoDisposeProviderRef<GameRepositoryImpl>;
-String _$gameHash() => r'217235d6e9b94489eb262f052d6239695e76006d';
+String _$gameHash() => r'd62ffd9fd76c29cff9818389bf0a373548243b33';
 
 /// See also [Game].
 @ProviderFor(Game)

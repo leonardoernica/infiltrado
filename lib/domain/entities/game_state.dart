@@ -21,6 +21,7 @@ class GameState with _$GameState {
     @Default(180) int discussionDuration, // Duration in seconds for discussion
     @Default(false) bool isTimerPaused,
     @Default(1) int infiltratorCount, // Number of infiltrators
+    String? lastEliminatedId,
     String? errorMessage,
   }) = _GameState;
 }

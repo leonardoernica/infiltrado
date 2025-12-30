@@ -15,12 +15,15 @@ class VoteResultScreen extends ConsumerWidget {
     final gameState = ref.watch(gameProvider);
     final notifier = ref.read(gameProvider.notifier);
     
-    final eliminatedPlayer = gameState.players.firstWhere(
-      (p) => p.status == PlayerStatus.eliminated,
-      orElse: () => gameState.players.first,
-    );
+    final eliminatedId = gameState.lastEliminatedId;
+    final eliminatedPlayer = eliminatedId != null 
+        ? gameState.players.firstWhere(
+            (p) => p.id == eliminatedId,
+            orElse: () => gameState.players.first,
+          )
+        : null;
     
-    final wasEliminated = gameState.players.any((p) => p.status == PlayerStatus.eliminated);
+    final wasEliminated = eliminatedId != null;
     
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -42,12 +45,12 @@ class VoteResultScreen extends ConsumerWidget {
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: eliminatedPlayer.role == PlayerRole.infiltrator 
+                    color: eliminatedPlayer!.role == PlayerRole.infiltrator 
                         ? AppColors.primary.withOpacity(0.1) 
                         : AppColors.error.withOpacity(0.1),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: eliminatedPlayer.role == PlayerRole.infiltrator 
+                      color: eliminatedPlayer!.role == PlayerRole.infiltrator 
                           ? AppColors.primary 
                           : AppColors.error,
                       width: 2,
@@ -55,11 +58,11 @@ class VoteResultScreen extends ConsumerWidget {
                   ),
                   child: Center(
                     child: Icon(
-                      eliminatedPlayer.role == PlayerRole.infiltrator 
+                      eliminatedPlayer!.role == PlayerRole.infiltrator 
                           ? Icons.check_circle_outline 
                           : Icons.person_off_outlined,
                       size: 64,
-                      color: eliminatedPlayer.role == PlayerRole.infiltrator 
+                      color: eliminatedPlayer!.role == PlayerRole.infiltrator 
                           ? AppColors.primary 
                           : AppColors.error,
                     ),
@@ -67,17 +70,17 @@ class VoteResultScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  '${eliminatedPlayer.name} foi eliminado!',
+                  '${eliminatedPlayer!.name} foi eliminado!',
                   style: AppTextStyles.title,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  eliminatedPlayer.role == PlayerRole.infiltrator 
+                  eliminatedPlayer!.role == PlayerRole.infiltrator 
                       ? 'Ele era o Infiltrado!' 
                       : 'Ele era um Civil...',
                   style: AppTextStyles.body.copyWith(
-                    color: eliminatedPlayer.role == PlayerRole.infiltrator 
+                    color: eliminatedPlayer!.role == PlayerRole.infiltrator 
                         ? AppColors.primary 
                         : AppColors.error,
                   ),

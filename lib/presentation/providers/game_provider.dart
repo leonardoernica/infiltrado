@@ -197,8 +197,16 @@ class Game extends _$Game {
   }
   
   void resumeDiscussion() {
+    // If timer was at 0, start a new round with the full duration
+    // Otherwise, resume from where it was
+    int newSeconds = state.secondsRemaining;
+    if (newSeconds <= 0) {
+      newSeconds = state.discussionDuration;
+    }
+
     state = state.copyWith(
       phase: GamePhase.discussion,
+      secondsRemaining: newSeconds,
       isTimerPaused: false,
     );
     _startTimer();
@@ -256,13 +264,14 @@ class Game extends _$Game {
     
     // Tie Breaker Logic: Currently just show result, maybe trigger re-vote or discussion
     if (topVoted.length > 1) {
-      state = state.copyWith(phase: GamePhase.voteResult);
+      state = state.copyWith(phase: GamePhase.voteResult, lastEliminatedId: null);
       return null;
     }
     
     final eliminatedId = topVoted.first.key;
     state = state.copyWith(
       phase: GamePhase.voteResult,
+      lastEliminatedId: eliminatedId,
       players: state.players.map((p) {
         if (p.id == eliminatedId) return p.copyWith(status: PlayerStatus.eliminated);
         return p;
@@ -274,14 +283,17 @@ class Game extends _$Game {
   
   String? getWinner() {
     final alive = state.players.where((p) => p.status == PlayerStatus.alive).toList();
-    final infiltratorsAlive = alive.where((p) => p.role == PlayerRole.infiltrator).length;
+    final infiltrators = alive.where((p) => p.role == PlayerRole.infiltrator).toList();
+    final infiltratorsAlive = infiltrators.length;
     final civiliansAlive = alive.length - infiltratorsAlive;
     
+    // 1. If NO infiltrators are left, Civilians win immediately.
     if (infiltratorsAlive == 0) {
       return 'civilians';
     }
     
-    // Infiltrators win if they equal or outnumber civilians
+    // 2. If Infiltrators equal or outnumber civilians, Infiltrators win.
+    // (e.g. 1v1, 2v2, 2v1)
     if (infiltratorsAlive >= civiliansAlive) {
       return 'infiltrator';
     }

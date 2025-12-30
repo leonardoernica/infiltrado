@@ -29,6 +29,7 @@ mixin _$GameState {
   bool get isTimerPaused => throw _privateConstructorUsedError;
   int get infiltratorCount =>
       throw _privateConstructorUsedError; // Number of infiltrators
+  String? get lastEliminatedId => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
 
   /// Create a copy of GameState
@@ -55,6 +56,7 @@ abstract class $GameStateCopyWith<$Res> {
       int discussionDuration,
       bool isTimerPaused,
       int infiltratorCount,
+      String? lastEliminatedId,
       String? errorMessage});
 
   $WordPairCopyWith<$Res>? get currentWordPair;
@@ -86,6 +88,7 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
     Object? discussionDuration = null,
     Object? isTimerPaused = null,
     Object? infiltratorCount = null,
+    Object? lastEliminatedId = freezed,
     Object? errorMessage = freezed,
   }) {
     return _then(_value.copyWith(
@@ -133,6 +136,10 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
           ? _value.infiltratorCount
           : infiltratorCount // ignore: cast_nullable_to_non_nullable
               as int,
+      lastEliminatedId: freezed == lastEliminatedId
+          ? _value.lastEliminatedId
+          : lastEliminatedId // ignore: cast_nullable_to_non_nullable
+              as String?,
       errorMessage: freezed == errorMessage
           ? _value.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -175,6 +182,7 @@ abstract class _$$GameStateImplCopyWith<$Res>
       int discussionDuration,
       bool isTimerPaused,
       int infiltratorCount,
+      String? lastEliminatedId,
       String? errorMessage});
 
   @override
@@ -205,6 +213,7 @@ class __$$GameStateImplCopyWithImpl<$Res>
     Object? discussionDuration = null,
     Object? isTimerPaused = null,
     Object? infiltratorCount = null,
+    Object? lastEliminatedId = freezed,
     Object? errorMessage = freezed,
   }) {
     return _then(_$GameStateImpl(
@@ -252,6 +261,10 @@ class __$$GameStateImplCopyWithImpl<$Res>
           ? _value.infiltratorCount
           : infiltratorCount // ignore: cast_nullable_to_non_nullable
               as int,
+      lastEliminatedId: freezed == lastEliminatedId
+          ? _value.lastEliminatedId
+          : lastEliminatedId // ignore: cast_nullable_to_non_nullable
+              as String?,
       errorMessage: freezed == errorMessage
           ? _value.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -275,6 +288,7 @@ class _$GameStateImpl implements _GameState {
       this.discussionDuration = 180,
       this.isTimerPaused = false,
       this.infiltratorCount = 1,
+      this.lastEliminatedId,
       this.errorMessage})
       : _history = history,
         _players = players;
@@ -325,11 +339,13 @@ class _$GameStateImpl implements _GameState {
   final int infiltratorCount;
 // Number of infiltrators
   @override
+  final String? lastEliminatedId;
+  @override
   final String? errorMessage;
 
   @override
   String toString() {
-    return 'GameState(status: $status, phase: $phase, currentWordPair: $currentWordPair, selectedCategory: $selectedCategory, history: $history, players: $players, currentTurnIndex: $currentTurnIndex, secondsRemaining: $secondsRemaining, discussionDuration: $discussionDuration, isTimerPaused: $isTimerPaused, infiltratorCount: $infiltratorCount, errorMessage: $errorMessage)';
+    return 'GameState(status: $status, phase: $phase, currentWordPair: $currentWordPair, selectedCategory: $selectedCategory, history: $history, players: $players, currentTurnIndex: $currentTurnIndex, secondsRemaining: $secondsRemaining, discussionDuration: $discussionDuration, isTimerPaused: $isTimerPaused, infiltratorCount: $infiltratorCount, lastEliminatedId: $lastEliminatedId, errorMessage: $errorMessage)';
   }
 
   @override
@@ -355,6 +371,8 @@ class _$GameStateImpl implements _GameState {
                 other.isTimerPaused == isTimerPaused) &&
             (identical(other.infiltratorCount, infiltratorCount) ||
                 other.infiltratorCount == infiltratorCount) &&
+            (identical(other.lastEliminatedId, lastEliminatedId) ||
+                other.lastEliminatedId == lastEliminatedId) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage));
   }
@@ -373,6 +391,7 @@ class _$GameStateImpl implements _GameState {
       discussionDuration,
       isTimerPaused,
       infiltratorCount,
+      lastEliminatedId,
       errorMessage);
 
   /// Create a copy of GameState
@@ -397,6 +416,7 @@ abstract class _GameState implements GameState {
       final int discussionDuration,
       final bool isTimerPaused,
       final int infiltratorCount,
+      final String? lastEliminatedId,
       final String? errorMessage}) = _$GameStateImpl;
 
   @override
@@ -421,6 +441,8 @@ abstract class _GameState implements GameState {
   bool get isTimerPaused;
   @override
   int get infiltratorCount; // Number of infiltrators
+  @override
+  String? get lastEliminatedId;
   @override
   String? get errorMessage;
 
