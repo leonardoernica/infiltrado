@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../widgets/app_button.dart';
-import '../../widgets/app_text_field.dart';
 import '../../providers/game_provider.dart';
 
 class CreateCategoryScreen extends ConsumerStatefulWidget {
@@ -61,15 +60,28 @@ class _CreateCategoryScreenState extends ConsumerState<CreateCategoryScreen> {
               
               Text('Nome da Categoria', style: AppTextStyles.heading),
               const SizedBox(height: 8),
-              AppTextField(
-                controller: _nameController,
-                hintText: 'Ex: Tecnologia, Mitologia, Anos 90...',
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Por favor, insira um nome.';
-                  }
-                  return null;
-                },
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: TextFormField(
+                  controller: _nameController,
+                  style: AppTextStyles.body.copyWith(color: AppColors.textPrimary),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Ex: Tecnologia, Mitologia, Anos 90...',
+                    hintStyle: AppTextStyles.body.copyWith(color: AppColors.textSecondary.withOpacity(0.5)),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Por favor, insira um nome.';
+                    }
+                    return null;
+                  },
+                ),
               ),
               
               const SizedBox(height: 24),
