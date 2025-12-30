@@ -197,16 +197,8 @@ class Game extends _$Game {
   }
   
   void resumeDiscussion() {
-    // If timer was at 0, start a new round with the full duration
-    // Otherwise, resume from where it was
-    int newSeconds = state.secondsRemaining;
-    if (newSeconds <= 0) {
-      newSeconds = state.discussionDuration;
-    }
-
     state = state.copyWith(
       phase: GamePhase.discussion,
-      secondsRemaining: newSeconds,
       isTimerPaused: false,
     );
     _startTimer();
@@ -293,8 +285,12 @@ class Game extends _$Game {
     }
     
     // 2. If Infiltrators equal or outnumber civilians, Infiltrators win.
-    // (e.g. 1v1, 2v2, 2v1)
     if (infiltratorsAlive >= civiliansAlive) {
+      return 'infiltrator';
+    }
+
+    // 3. TIMEOUT RULE: If the timer reaches 0 and the infiltrator survived the subsequent vote, they win.
+    if (state.secondsRemaining <= 0) {
       return 'infiltrator';
     }
     
