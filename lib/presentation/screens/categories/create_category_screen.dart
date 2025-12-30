@@ -60,57 +60,77 @@ class _CreateCategoryScreenState extends ConsumerState<CreateCategoryScreen> {
               
               Text('Nome da Categoria', style: AppTextStyles.heading),
               const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: TextFormField(
-                  controller: _nameController,
-                  style: AppTextStyles.body.copyWith(color: AppColors.textPrimary),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Ex: Tecnologia, Mitologia, Anos 90...',
-                    hintStyle: AppTextStyles.body.copyWith(color: AppColors.textSecondary.withOpacity(0.5)),
+              TextFormField(
+                controller: _nameController,
+                style: AppTextStyles.body.copyWith(color: AppColors.textPrimary),
+                decoration: InputDecoration(
+                  hintText: 'Ex: Tecnologia, Mitologia, Anos 90...',
+                  hintStyle: AppTextStyles.body.copyWith(color: AppColors.textSecondary.withOpacity(0.5)),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.border),
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Por favor, insira um nome.';
-                    }
-                    return null;
-                  },
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.primary, width: 2),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.error),
+                  ),
                 ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Por favor, insira um nome.';
+                  }
+                  return null;
+                },
               ),
               
               const SizedBox(height: 24),
               
               Text('Descrição Detalhada', style: AppTextStyles.heading),
               const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: TextFormField(
-                  controller: _descriptionController,
-                  maxLines: 5,
-                  style: AppTextStyles.body.copyWith(color: AppColors.textPrimary),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Descreva o que essa categoria abrange. Quanto mais detalhes, melhor a IA entenderá.',
-                    hintStyle: AppTextStyles.body.copyWith(color: AppColors.textSecondary.withOpacity(0.5)),
+              TextFormField(
+                controller: _descriptionController,
+                maxLines: 5,
+                style: AppTextStyles.body.copyWith(color: AppColors.textPrimary),
+                decoration: InputDecoration(
+                  hintText: 'Descreva o que essa categoria abrange. Quanto mais detalhes, melhor a IA entenderá.',
+                  hintStyle: AppTextStyles.body.copyWith(color: AppColors.textSecondary.withOpacity(0.5)),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  contentPadding: const EdgeInsets.all(16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.border),
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().length < 10) {
-                      return 'A descrição deve ter pelo menos 10 caracteres.';
-                    }
-                    return null;
-                  },
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.primary, width: 2),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.error),
+                  ),
                 ),
+                validator: (value) {
+                  if (value == null || value.trim().length < 10) {
+                    return 'A descrição deve ter pelo menos 10 caracteres.';
+                  }
+                  return null;
+                },
               ),
               
               const SizedBox(height: 24),
