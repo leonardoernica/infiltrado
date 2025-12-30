@@ -19,10 +19,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void initState() {
     super.initState();
-    // Start discussion timer when screen loads
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(gameProvider.notifier).startDiscussion();
-    });
   }
 
   void _showForgotWordDialog() {

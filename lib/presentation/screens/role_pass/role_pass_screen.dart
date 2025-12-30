@@ -33,6 +33,7 @@ class _RolePassScreenState extends ConsumerState<RolePassScreen> {
     notifier.nextTurn();
     if (notifier.isDistributionComplete) {
       // All players saw their roles, start game
+      notifier.startDiscussion();
       context.go('/game');
     } else {
       // Go to blank screen to hide next player's role
