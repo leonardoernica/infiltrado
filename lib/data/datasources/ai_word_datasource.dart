@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:math';
+import 'package:dio/dio.dart';
 import '../../domain/entities/word_pair.dart';
 import '../models/word_pair_model.dart';
 import '../../core/api/open_router_client.dart';
@@ -354,11 +355,29 @@ OUTPUT FORMAT (JSON ONLY):
   // --- HELPER METHODS ---
 
   Future<String?> _callLLM(String prompt, double totalTemperature) async {
+    // Validate API key before making request
+    final apiKey = _client.dio.options.headers['Authorization'] as String?;
+    if (apiKey == null || apiKey == 'Bearer ' || apiKey.isEmpty) {
+      final errorMsg = '❌ CRITICAL: OpenRouter API key is not configured! Check .env file.';
+      if (kDebugMode) {
+        print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        print(errorMsg);
+        print('Authorization header: $apiKey');
+        print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      }
+      throw Exception(errorMsg);
+    }
+    
     int retries = 0;
     const maxRetries = 3;
 
     while (retries <= maxRetries) {
       try {
+        if (kDebugMode) {
+          print('[LLM] Attempt ${retries + 1}/${maxRetries + 1}');
+          print('[LLM] Calling API with model: qwen/qwen3-235b-a22b-2507');
+        }
+        
         final response = await _client.dio.post(
           '/chat/completions',
           data: {
@@ -369,25 +388,70 @@ OUTPUT FORMAT (JSON ONLY):
             "temperature": totalTemperature,
           },
         );
+        
+        if (kDebugMode) {
+          print('[LLM] ✅ Response received with status: ${response.statusCode}');
+        }
+        
         if (response.statusCode == 200) {
           return response.data['choices'][0]['message']['content'];
         }
-      } catch (e) {
-         if (kDebugMode) print("LLM Call Error (Attempt ${retries + 1}): $e");
+      } on DioException catch (e) {
+         if (kDebugMode) {
+           print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+           print("❌ LLM Call Error (Attempt ${retries + 1}/${maxRetries + 1})");
+           print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+           print("Error Type: ${e.type}");
+           print("Status Code: ${e.response?.statusCode ?? 'N/A'}");
+           print("Message: ${e.message}");
+           
+           if (e.response != null) {
+             print("Response Data: ${e.response?.data}");
+             print("Response Headers: ${e.response?.headers}");
+           }
+           
+           if (e.type == DioExceptionType.connectionTimeout) {
+             print("⏱️ Connection timeout - network issue");
+           } else if (e.type == DioExceptionType.receiveTimeout) {
+             print("⏱️ Receive timeout - slow response");
+           } else if (e.type == DioExceptionType.badCertificate) {
+             print("🔒 SSL Certificate error - common on iOS");
+           } else if (e.type == DioExceptionType.connectionError) {
+             print("🌐 Connection error - check network/firewall");
+           }
+           
+           print("Stack trace: ${e.stackTrace}");
+           print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+         }
          
          // Check for 429 or 5xx to retry
          bool shouldRetry = false;
-         if (e.toString().contains('429')) shouldRetry = true; 
-         // Dio exception checking allows more granular status check if available
+         final statusCode = e.response?.statusCode;
+         
+         if (statusCode == 429) {
+           shouldRetry = true;
+           if (kDebugMode) print("🔄 Rate limited (429) - will retry");
+         } else if (statusCode != null && statusCode >= 500) {
+           shouldRetry = true;
+           if (kDebugMode) print("🔄 Server error ($statusCode) - will retry");
+         }
          
          if (shouldRetry && retries < maxRetries) {
             retries++;
             final waitSeconds = pow(2, retries); // Exponential backoff: 2s, 4s, 8s
-            if (kDebugMode) print("Waiting ${waitSeconds}s before retry...");
+            if (kDebugMode) print("⏳ Waiting ${waitSeconds}s before retry...");
             await Future.delayed(Duration(seconds: waitSeconds.toInt()));
             continue;
          }
+         
+         if (kDebugMode) print("❌ Giving up after ${retries + 1} attempts");
          return null; // Give up if other error or max retries
+      } catch (e) {
+         if (kDebugMode) {
+           print("❌ Unexpected error (not DioException): $e");
+           print("Stack trace: ${StackTrace.current}");
+         }
+         return null;
       }
       break; 
     }

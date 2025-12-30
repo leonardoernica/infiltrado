@@ -27,7 +27,7 @@ class AppTheme {
         bodySmall: AppTextStyles.caption,
         labelLarge: AppTextStyles.button,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.surface,
         elevation: 0, // ZERO elevation for flat design
         shape: RoundedRectangleBorder(
